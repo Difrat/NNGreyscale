@@ -1,12 +1,8 @@
 import torch
 from torch.utils.data import DataLoader
 
-from Torch_file import MyDataset, MyModel
-import numpy as np
-import pandas as pd
-from PIL import Image
-from data_processing_module import get_data_from_image, read_data_file, mark_pixel, write_data_file
-from image_module import creat_random_pixel_image, convert_image_to_grayscale
+from torch_file import MyDataset, MyModel
+from data_processing_module import read_data_file
 import torch.optim as optim
 import torch.nn as nn
 from tqdm import tqdm
@@ -36,10 +32,7 @@ for _e in range(epochs):
     train_tqdm = tqdm(train_data, leave=True)
 
     for x_train, y_train in train_tqdm:
-        # print(x_train, y_train)
         prediction = model(x_train)
-        # probabilities = torch.softmax(prediction, dim=0)
-        # print(x_train, torch.argmax(probabilities, dim=0))
         loss = loss_func(prediction, y_train.view(-1))
 
         optim.zero_grad()
@@ -62,11 +55,8 @@ for x_test, y_test in test_data:
         p = model(x_test)
         probabilities = torch.softmax(p, dim=0)
         predicted_class = torch.argmax(probabilities, dim=0)
-        # p = torch.argmax(p, dim=0)
-        # y = torch.argmax(y_test, dim=1)
-        # Q += torch.sum(p == y).item()
         print(x_test, predicted_class)
 
-# Q /= len(d_test)
+Q /= len(d_test)
 
-# print(Q)
+print(Q)

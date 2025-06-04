@@ -1,18 +1,10 @@
 import torch
-import os
 import numpy as np
-from numpy import dtype
-from sympy import Float
 from torch.utils.data import Dataset
 import torch.nn as nn
 import torch.nn.functional as f
-import torch.optim as optim
-import pandas as p
 
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-# print("CUDA доступен:", torch.cuda.is_available())
-# print("Количество доступных GPU:", torch.cuda.device_count())
-# print("Имя текущего GPU:", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "Нет доступного GPU")
+
 
 class MyModel(nn.Module):
     def __init__(self, input_dim, num_hidden, output_dim):
@@ -41,7 +33,6 @@ class MyDataset(Dataset):
     def __getitem__(self, idx):
         t = self.list_dataset[idx][-1]
         target = self.targets[self.dict_of_targets[t]]
-        # target_t = target.transpose(0,1)
         data = self.list_dataset[idx][0]
         light_pix = torch.tensor(data, dtype=torch.float32)
 
