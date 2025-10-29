@@ -12,35 +12,46 @@ from tqdm import tqdm
 
 class NNGreyscale:
 
-    def __init__(self, date = None, model_nn = None):
-        self.date = date
+    def __init__(self, data=None, model_nn=None):
+        self.data = data
         self.__model_nn = model_nn
         self.__train_data = None
         self.__test_data = None
 
-    def set_date(self):
-        try:
-            count = len(self.date)
+    def set_date(self, data=None) -> None:
+        """
+        Метод, который позволяет установить данные для нейросети и разбить их на тренировочную и тестовую часть
 
-            len_train_data = round(count * .85)
-            train_dataset = self.date[:len_train_data]
-            test_dataset = self.date[len_train_data:]
+        :param data: должен получить массив данных numpy
 
-            self.__train_data = train_dataset
-            self.__test_data = test_dataset
-        except TypeError:
-            print(f'Произошла ошибка {TypeError}: отсутствуют данные в экземпляре класса. Укажите данные для поля date.')
+        :return: None
+        """
+        if data is not None:
+            self.date = data
+        else:
+            try:
+                count = len(self.data)
 
-    def train_nn(self, path):
+                len_train_data = round(count * .85)
+                train_dataset = self.data[:len_train_data]
+                test_dataset = self.data[len_train_data:]
+
+                self.__train_data = train_dataset
+                self.__test_data = test_dataset
+            except TypeError as e:
+                print(
+                    f'Произошла ошибка TypeError: не были указаны данные для обучения нейросети, укажите данные в поле date')
+
+    def train_nn(self, path) -> None:
         """
         Данный метод применяется для обучения модели на тренировочных данных
 
-        Атрибуты:
+        :param path: Использует строковое значение для указания пути где будет сохранена обученная модель
 
-        path -> Использует строковое значение для указания пути где будет сохранена обученная модель
+        :return: None
         """
-        d_train = MyDataset(self.date)
-        train_data = DataLoader(d_train, batch_size=1, shuffle=False, drop_last=False)
+        dateset_train = MyDataset(self.__train_data)
+        train_data = DataLoader(dateset_train, batch_size=1, shuffle=False, drop_last=False)
 
         optim_f = optim.Adam(self.__model_nn.parameters(), lr=0.01)
         loss_func = nn.CrossEntropyLoss()
@@ -67,29 +78,30 @@ class NNGreyscale:
 
         save_model(self.__model_nn, path)
 
+        return None
 
-    def test_nn(self, d_test):
-        test_data = DataLoader(d_test, batch_size=1, shuffle=False, drop_last=False)
+    def test_nn(self):
+        test_data = DataLoader(self.__test_data, batch_size=1, shuffle=False, drop_last=False)
         Q = 0
 
-        self.model_nn.eval()
+        self.__model_nn.eval()
 
         for x_test, y_test in test_data:
             with torch.no_grad():
-                p = self.model_nn(x_test)
+                p = self.__model_nn(x_test)
                 p = torch.argmax(p, dim=0)
                 y = torch.argmax(y_test, dim=1)
                 Q += torch.sum(p == y).item()
 
-        Q /= len(d_test)
+        Q /= len(self.__train_data)
 
     def run_nn(self):
         pass
 
 
 dataset = read_data_file('Dataset/dataset.csv')
-less_lst_val = []
-loss_lst = []
-d_test = MyDataset(train_dataset)
 model = MyModel(1, 30, 5)
-nn_greyscale = NNGreyscale(model_nn=model)
+nn_greyscale = NNGreyscale(data=dataset,model_nn=model)
+nn_greyscale.set_date()
+nn_greyscale.train_nn('C:\\Users\\Difrat\\PycharmProjects\\PyTorch_tutorial\\NNGreyscale_1.zip')
+nn_greyscale.test_nn()
