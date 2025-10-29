@@ -35,6 +35,12 @@ def creat_random_pixel_image(mode: str, size: tuple[int, int] = (256, 256), path
 
 
 def convert_image_to_grayscale(path: str) -> None:
+    """Функция переводит цветные пиксели в оттенки серого
+
+    Атрибуты:
+
+    Path -> использует строковое значение для получения пути до расположения преобразуемого изображения
+    """
 
     img = Image.open(path).convert('L')
 

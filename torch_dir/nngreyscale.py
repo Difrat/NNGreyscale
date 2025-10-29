@@ -12,19 +12,41 @@ from tqdm import tqdm
 
 class NNGreyscale:
 
-    def __init__(self, date, model):
+    def __init__(self, date = None, model_nn = None):
         self.date = date
-        self.model = model
+        self.__model_nn = model_nn
+        self.__train_data = None
+        self.__test_data = None
+
+    def set_date(self):
+        try:
+            count = len(self.date)
+
+            len_train_data = round(count * .85)
+            train_dataset = self.date[:len_train_data]
+            test_dataset = self.date[len_train_data:]
+
+            self.__train_data = train_dataset
+            self.__test_data = test_dataset
+        except TypeError:
+            print(f'Произошла ошибка {TypeError}: отсутствуют данные в экземпляре класса. Укажите данные для поля date.')
 
     def train_nn(self, path):
+        """
+        Данный метод применяется для обучения модели на тренировочных данных
+
+        Атрибуты:
+
+        path -> Использует строковое значение для указания пути где будет сохранена обученная модель
+        """
         d_train = MyDataset(self.date)
         train_data = DataLoader(d_train, batch_size=1, shuffle=False, drop_last=False)
 
-        optim_f = optim.Adam(self.model.parameters(), lr=0.01)
+        optim_f = optim.Adam(self.__model_nn.parameters(), lr=0.01)
         loss_func = nn.CrossEntropyLoss()
 
         epochs = 5
-        self.model.train()
+        self.__model_nn.train()
 
         for _e in range(epochs):
             loss_mean = 0
@@ -32,7 +54,7 @@ class NNGreyscale:
             train_tqdm = tqdm(train_data, leave=True)
 
             for x_train, y_train in train_tqdm:
-                prediction = self.model(x_train)
+                prediction = self.__model_nn(x_train)
                 loss = loss_func(prediction, y_train.view(-1))
 
                 optim_f.zero_grad()
@@ -43,32 +65,31 @@ class NNGreyscale:
                 loss_mean = 1 / lm_count * loss.item() + (1 - 1 / lm_count) * loss_mean
                 train_tqdm.set_description(f'Epoch {_e + 1}/{epochs}, loss_mean: {loss_mean:.3f}')
 
-        save_model(self.model, path)
+        save_model(self.__model_nn, path)
 
 
     def test_nn(self, d_test):
         test_data = DataLoader(d_test, batch_size=1, shuffle=False, drop_last=False)
         Q = 0
 
-        self.model.eval()
+        self.model_nn.eval()
 
         for x_test, y_test in test_data:
             with torch.no_grad():
-                p = self.model(x_test)
+                p = self.model_nn(x_test)
                 p = torch.argmax(p, dim=0)
                 y = torch.argmax(y_test, dim=1)
                 Q += torch.sum(p == y).item()
 
         Q /= len(d_test)
 
+    def run_nn(self):
+        pass
 
 
-# dataset = read_data_file('Dataset/dataset.csv')
-# count = len(dataset)
-# len_train_data = round(count * .85)
-# train_dataset = dataset[:len_train_data]
-# test_dataset = dataset[len_train_data:]
-# less_lst_val = []
-# loss_lst = []
-# d_test = MyDataset(test_dataset)
-# model = MyModel(1, 30, 5)
+dataset = read_data_file('Dataset/dataset.csv')
+less_lst_val = []
+loss_lst = []
+d_test = MyDataset(train_dataset)
+model = MyModel(1, 30, 5)
+nn_greyscale = NNGreyscale(model_nn=model)
