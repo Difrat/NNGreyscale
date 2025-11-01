@@ -1,9 +1,8 @@
 """Модуль обучения нейронной сети"""
 import torch
 from torch.utils.data import DataLoader
-
 from torch_file import MyDataset, MyModel
-from data_processing_module import read_data_file
+
 from save_load_model import save_model
 import torch.optim as optim
 import torch.nn as nn
@@ -26,21 +25,28 @@ class NNGreyscale:
 
         :return: None
         """
+
         if data is not None:
+
             self.date = data
+
         else:
+
             try:
+
                 count = len(self.data)
 
                 len_train_data = round(count * .85)
-                train_dataset = self.data[:len_train_data]
-                test_dataset = self.data[len_train_data:]
 
-                self.__train_data = train_dataset
-                self.__test_data = test_dataset
+                self.__train_data = MyDataset(self.data[:len_train_data])
+                self.__test_data = MyDataset(self.data[len_train_data:])
+
             except TypeError as e:
+
                 print(
                     f'Произошла ошибка TypeError: не были указаны данные для обучения нейросети, укажите данные в поле date')
+
+        return None
 
     def train_nn(self, path) -> None:
         """
@@ -50,8 +56,8 @@ class NNGreyscale:
 
         :return: None
         """
-        dateset_train = MyDataset(self.__train_data)
-        train_data = DataLoader(dateset_train, batch_size=1, shuffle=False, drop_last=False)
+
+        train_data = DataLoader(self.__train_data, batch_size=1, shuffle=False, drop_last=False)
 
         optim_f = optim.Adam(self.__model_nn.parameters(), lr=0.01)
         loss_func = nn.CrossEntropyLoss()
@@ -81,6 +87,7 @@ class NNGreyscale:
         return None
 
     def test_nn(self):
+
         test_data = DataLoader(self.__test_data, batch_size=1, shuffle=False, drop_last=False)
         Q = 0
 
@@ -93,15 +100,11 @@ class NNGreyscale:
                 y = torch.argmax(y_test, dim=1)
                 Q += torch.sum(p == y).item()
 
-        Q /= len(self.__train_data)
+        Q /= len(self.__test_data)
+        print(Q)
 
     def run_nn(self):
         pass
 
 
-dataset = read_data_file('Dataset/dataset.csv')
-model = MyModel(1, 30, 5)
-nn_greyscale = NNGreyscale(data=dataset,model_nn=model)
-nn_greyscale.set_date()
-nn_greyscale.train_nn('C:\\Users\\Difrat\\PycharmProjects\\PyTorch_tutorial\\NNGreyscale_1.zip')
-nn_greyscale.test_nn()
+

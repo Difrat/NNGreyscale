@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 
+PATH_TO_DATASET = ''
+PATH_TO_MODEL = ''
 
 def convert_data_to_percent(num: int) -> int:
     """Преобразования диапазона 0-255 RGB каналов к процентам """
@@ -35,6 +37,7 @@ def read_data_file(file_name: str) -> np.ndarray or str:
 
     file_name -> использует строковое значение для указания пути до файла куда нужно записать данные
     """
+
     if os.path.isfile(file_name):
         loaded_df = pd.read_csv(file_name)
 
