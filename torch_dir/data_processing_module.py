@@ -5,8 +5,6 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 
-PATH_TO_DATASET = ''
-PATH_TO_MODEL = ''
 
 def convert_data_to_percent(num: int) -> int:
     """Преобразования диапазона 0-255 RGB каналов к процентам """

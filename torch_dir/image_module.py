@@ -1,22 +1,21 @@
 """Это модуль для генерации данных для нейронной сети"""
+import os
+from os.path import isfile
 
 from PIL import Image
 import random
 from datetime import datetime
 
 
-def creat_random_pixel_image(mode: str, size: tuple[int, int] = (256, 256), path: str = '') -> None:
+def creat_random_pixel_image(mode: str, size: tuple[int, int] = (256, 256), file_name: str = 'random_image') -> None:
     """Функция создает изображение из набора пикселей которые получают случайные цвета
 
-    Атрибуты:
-
-    Mode -> использует строковое значение с помощью которого указывается необходимый режим. Список режимов смотреть в
+    :param mode: Использует строковое значение с помощью которого указывается необходимый режим. Список режимов смотреть в
     документации библиотеки pillow (https://pillow.readthedocs.io/en/stable/handbook/concepts.html#concept-modes)
 
-    Size -> использует картеж длиной 2, элементы картежа имеют тип int. Тут мы задаем размер изображения
+    :param size: Картеж длиной 2, элементы картежа имеют тип int. Тут мы задаем размер изображения
 
-    Path -> использует строковое значение для указания пути где будет создан файл. Если путь не указывать, файл с
-    изображением будет создан в текущей директории модуля
+    :param file_name: Принимает строковое значение в качестве имени сохраняемого файла.
     """
 
     random_image = Image.new(mode=mode, size=size)
@@ -29,23 +28,26 @@ def creat_random_pixel_image(mode: str, size: tuple[int, int] = (256, 256), path
 
     date_time = datetime.now().strftime("%Y_%m_%d %H_%M")
 
-    random_image.save(f'{path}random_image_{size[0]}x{size[1]} {date_time}.png')
+    random_image.save(os.path.join(os.getcwd(), f'image\\{file_name}_{size[0]}x{size[1]} {date_time}.png'))
 
     return None
 
 
-def convert_image_to_grayscale(path: str) -> None:
+def convert_image_to_grayscale(file_name: str) -> None:
     """Функция переводит цветные пиксели в оттенки серого
 
-    Атрибуты:
 
-    Path -> использует строковое значение для получения пути до расположения преобразуемого изображения
+    :param file_name: Использует строковое значение в качестве имени сохраняемого файла. Расширение файла не указывается
     """
+    if isfile(os.path.join(os.getcwd(), f'image\\{file_name}.png')):
 
-    img = Image.open(path).convert('L')
+        img = Image.open(os.path.join(os.getcwd(), f'image\\{file_name}.png')).convert('L')
 
-    date_time = datetime.now().strftime("%Y_%m_%d %H_%M")
+        date_time = datetime.now().strftime("%Y_%m_%d %H_%M")
 
-    img.save(f'grayscale_image {date_time}.png')
+        img.save(os.path.join(os.getcwd(), f'image\\{file_name} {date_time}.png'))
+
+    else:
+        print('Указан неверный путь')
 
     return None

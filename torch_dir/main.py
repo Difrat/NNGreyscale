@@ -8,5 +8,5 @@ if __name__ == '__main__':
     model = MyModel(1, 30, 5)
     nn_greyscale = NNGreyscale(data=dataset, model_nn=model)
     nn_greyscale.set_date()
-    nn_greyscale.train_nn('C:\\Users\\Difrat\\PycharmProjects\\PyTorch_tutorial\\NNGreyscale_1.zip')
+    nn_greyscale.train_nn('Greyscale')
     nn_greyscale.test_nn()

@@ -1,7 +1,10 @@
 """Модуль обучения нейронной сети"""
 import torch
+import os
+from datetime import datetime
 from torch.utils.data import DataLoader
 from torch_file import MyDataset, MyModel
+
 
 from save_load_model import save_model
 import torch.optim as optim
@@ -48,11 +51,11 @@ class NNGreyscale:
 
         return None
 
-    def train_nn(self, path) -> None:
+    def train_nn(self, model_name: str) -> None:
         """
         Данный метод применяется для обучения модели на тренировочных данных
 
-        :param path: Использует строковое значение для указания пути где будет сохранена обученная модель
+        :param model_name: Использует строковое значение для указания мени модели
 
         :return: None
         """
@@ -82,7 +85,9 @@ class NNGreyscale:
                 loss_mean = 1 / lm_count * loss.item() + (1 - 1 / lm_count) * loss_mean
                 train_tqdm.set_description(f'Epoch {_e + 1}/{epochs}, loss_mean: {loss_mean:.3f}')
 
-        save_model(self.__model_nn, path)
+        date_time = datetime.now().strftime("%Y_%m_%d %H_%M")
+
+        save_model(self.__model_nn, os.path.join(os.getcwd(), f'models\\{model_name} {date_time}.zip'))
 
         return None
 
