@@ -14,16 +14,14 @@ def convert_data_to_percent(num: int) -> int:
 def write_data_file(file_name: str, list_of_data: list) -> None:
     """Функция для записи значений в CVS файл
 
-    Атрибуты:
+    :param file_name: Использует строковое значение для указания пути до файла куда нужно записать данные
 
-    file_name -> использует строковое значение для указания пути до файла куда нужно записать данные
-
-    list_of_data -> использует список в качестве атрибута
+    :param list_of_data: Использует список в качестве атрибута
     """
 
     np_data = np.array(list_of_data[1:])
     df = pd.DataFrame(np_data, columns=list_of_data[0])
-    df.to_csv(file_name, index=False)
+    df.to_csv(os.path.join(os.getcwd(), f'dataset\\{file_name}'), index=False)
 
     return None
 
@@ -31,13 +29,12 @@ def write_data_file(file_name: str, list_of_data: list) -> None:
 def read_data_file(file_name: str) -> np.ndarray or str:
     """Функция получения dataset данных из csv файла
 
-    Атрибуты:
 
-    file_name -> использует строковое значение для указания пути до файла куда нужно записать данные
+    :param file_name: Использует строковое значение для указания пути до файла куда нужно записать данные
     """
 
-    if os.path.isfile(file_name):
-        loaded_df = pd.read_csv(file_name)
+    if os.path.isfile(os.path.join(os.getcwd(), f'dataset\\{file_name}')):
+        loaded_df = pd.read_csv(os.path.join(os.getcwd(), f'dataset\\{file_name}'))
 
         np_dataset = loaded_df.to_numpy()
     else:
@@ -46,29 +43,38 @@ def read_data_file(file_name: str) -> np.ndarray or str:
     return np_dataset
 
 
-def get_data_from_image(path: str) -> list:
+def get_data_from_image(file_name: str) -> list:
     """Функция получает характеристики каждого пикселя из изображения и отдает список. Список содержит RGB цветовые
     координаты и координаты пикселя
 
-    Атрибуты:
 
-    Path -> Путь к расположению файла
+    :param file_name: Путь к расположению файла
+    :return: Функция возвращает результат в виде списка состоящего из цветовых координат пикселя и его координат на изображении
     """
 
     data_list = [['brightness', 'X', 'Y']]
 
-    img_object = Image.open(path)
+    if os.path.isfile(os.path.join(os.getcwd(), f'image\\{file_name}')):
 
-    width, height = img_object.size
+        img_object = Image.open(os.path.join(os.getcwd(), f'image\\{file_name}'))
 
-    for x in range(width):
-        for y in range(height):
-            rgb_pixel = img_object.getpixel((x, y))
-            data_list.append([rgb_pixel, x, y])
+        width, height = img_object.size
+
+        for x in range(width):
+            for y in range(height):
+                rgb_pixel = img_object.getpixel((x, y))
+                data_list.append([rgb_pixel, x, y])
 
     return data_list
 
+
 def mark_pixel(dataset: np.ndarray) -> list:
+    """
+    Функция размечает каждый пиксель в градациях серого.
+
+    :param dataset: Получает в качестве параметра список с немаркированными пикселями
+    :return: Функция возвращает результат в виде списка
+    """
     color = []
     for _ in dataset:
 
@@ -83,7 +89,6 @@ def mark_pixel(dataset: np.ndarray) -> list:
         else:
             color.append('White')
 
-
     return color
 
-
+# print(os.path.join(os.getcwd(), f'dataset\\dataset.csv'))
