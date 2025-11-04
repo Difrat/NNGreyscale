@@ -1,8 +1,11 @@
 """Модуль обучения нейронной сети"""
 import torch
 import os
+import pandas as pd
 from datetime import datetime
 from torch.utils.data import DataLoader
+
+from torch_dir.data_processing_module import write_data_file, move_file
 from torch_file import MyDataset
 
 from save_load_model import save_model
@@ -51,11 +54,12 @@ class NNGreyscale:
 
         return None
 
+
     def train_nn(self, model_name: str) -> None:
         """
         Данный метод применяется для обучения модели на тренировочных данных
 
-        :param model_name: Использует строковое значение для указания мени модели
+        :param model_name: Использует строковое значение для указания имени модели
 
         :return: None
         """
@@ -91,6 +95,7 @@ class NNGreyscale:
 
         return None
 
+
     def test_nn(self) -> None:
 
         test_data = DataLoader(self.__test_data, batch_size=1, shuffle=False, drop_last=False)
@@ -108,27 +113,34 @@ class NNGreyscale:
         q /= len(self.__test_data)
         print(q)
 
+
     def set_model_nn(self, model_nn_name: str) -> None:
 
         self.__model_nn.load_state_dict(torch.load(f'C:\\Users\\Difrat\\PycharmProjects\\PyTorch_tutorial\\torch_dir\\models\\{model_nn_name}.zip'))
 
         return None
 
-    def run_model(self):
+
+    def run_model(self, file_name: str) -> None:
         self.__model_nn.eval()
 
         self.__combat_data = MyDataset(self.data)
         combat_data = DataLoader(self.__combat_data, batch_size=1, shuffle=False, drop_last=False)
 
-        list_predictions = []
+        list_predictions = ['Gray class']
 
         for item, target in combat_data:
             with torch.no_grad():
                 prediction = self.__model_nn(item)
                 prediction = torch.argmax(prediction, dim=0)
-                list_predictions.append((item,prediction))
+                list_predictions.append(prediction.item())
 
-        print(list_predictions)
+        write_data_file(f'{file_name}', list_predictions)
+
+        move_file(old_file_name=file_name, new_file_name=file_name)
+
+        return None
+
 
 
 

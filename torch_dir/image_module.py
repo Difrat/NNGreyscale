@@ -45,9 +45,10 @@ def convert_image_to_grayscale(file_name: str) -> None:
 
         date_time = datetime.now().strftime("%Y_%m_%d %H_%M")
 
-        img.save(os.path.join(os.getcwd(), f'image\\{file_name} {date_time}.png'))
+        img.save(os.path.join(os.getcwd(), f'image\\{file_name}_greyscale {date_time}.png'))
 
     else:
         print('Указан неверный путь')
 
     return None
+

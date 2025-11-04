@@ -1,47 +1,16 @@
 """Модуль для обработки данных"""
 
 import os
+from os.path import isfile
+
 import numpy as np
 import pandas as pd
 from PIL import Image
 
 
-def convert_data_to_percent(num: int) -> int:
-    """Преобразования диапазона 0-255 RGB каналов к процентам """
-    return int(num / 255 * 100)
-
-
-def write_data_file(file_name: str, list_of_data: list) -> None:
-    """Функция для записи значений в CVS файл
-
-    :param file_name: Использует строковое значение для указания пути до файла куда нужно записать данные
-
-    :param list_of_data: Использует список в качестве атрибута
-    """
-
-    np_data = np.array(list_of_data[1:])
-    df = pd.DataFrame(np_data, columns=list_of_data[0])
-    df.to_csv(os.path.join(os.getcwd(), f'dataset\\{file_name}'), index=False)
-
-    return None
-
-
-def read_data_file(file_name: str) -> np.ndarray or str:
-    """Функция получения dataset данных из csv файла
-
-
-    :param file_name: Использует строковое значение для указания пути до файла куда нужно записать данные
-    """
-
-    if os.path.isfile(os.path.join(os.getcwd(), f'dataset\\{file_name}')):
-        loaded_df = pd.read_csv(os.path.join(os.getcwd(), f'dataset\\{file_name}'))
-
-        np_dataset = loaded_df.to_numpy()
-    else:
-        return print(f'File {file_name} does not exist')
-
-    return np_dataset
-
+# def convert_data_to_percent(num: int) -> int:
+#     """Преобразования диапазона 0-255 RGB каналов к процентам """
+#     return int(num / 255 * 100)
 
 def get_data_from_image(file_name: str) -> list:
     """Функция получает характеристики каждого пикселя из изображения и отдает список. Список содержит RGB цветовые
@@ -68,6 +37,52 @@ def get_data_from_image(file_name: str) -> list:
     return data_list
 
 
+def write_data_file(file_name: str, list_of_data: list) -> None:
+    """Функция для записи значений в CVS файл
+
+    :param file_name: Использует строковое значение для указания пути до файла куда нужно записать данные
+
+    :param list_of_data: Использует список в качестве атрибута
+    """
+
+    if isfile(os.path.join(os.getcwd(), f'dataset\\{file_name}')):
+
+        df = pd.read_csv(os.path.join(os.getcwd(), f'dataset\\{file_name}'))
+        df[list_of_data[0]] = list_of_data[1:]
+        df.to_csv(os.path.join(os.getcwd(), f'dataset\\{file_name}'), index=False)
+
+    else:
+        np_data = np.array(list_of_data[1:])
+        df = pd.DataFrame(np_data, columns=list_of_data[0])
+        df.to_csv(os.path.join(os.getcwd(), f'dataset\\{file_name}'), index=False)
+
+    return None
+
+
+def move_file(old_file_name: str, new_file_name: str) -> None:
+
+    os.rename(os.path.join(os.getcwd(), f'dataset\\{old_file_name}'), os.path.join(os.getcwd(), f'results\\{new_file_name}'))
+
+    return None
+
+
+def read_data_file(file_name: str) -> np.ndarray or str:
+    """Функция получения dataset данных из csv файла
+
+
+    :param file_name: Использует строковое значение для указания пути до файла куда нужно записать данные
+    """
+
+    if os.path.isfile(os.path.join(os.getcwd(), f'dataset\\{file_name}')):
+        loaded_df = pd.read_csv(os.path.join(os.getcwd(), f'dataset\\{file_name}'))
+
+        np_dataset = loaded_df.to_numpy()
+    else:
+        return print(f'File {file_name} does not exist')
+
+    return np_dataset
+
+
 def mark_pixel(dataset: np.ndarray) -> list:
     """
     Функция размечает каждый пиксель в градациях серого.
@@ -90,5 +105,3 @@ def mark_pixel(dataset: np.ndarray) -> list:
             color.append('White')
 
     return color
-
-# print(os.path.join(os.getcwd(), f'dataset\\dataset.csv'))
