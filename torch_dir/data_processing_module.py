@@ -60,8 +60,8 @@ def write_data_file(file_name: str, list_of_data: list) -> None:
 
 
 def move_file(old_file_name: str, new_file_name: str) -> None:
-
-    os.rename(os.path.join(os.getcwd(), f'dataset\\{old_file_name}'), os.path.join(os.getcwd(), f'results\\{new_file_name}'))
+    os.rename(os.path.join(os.getcwd(), f'dataset\\{old_file_name}'),
+              os.path.join(os.getcwd(), f'results\\{new_file_name}'))
 
     return None
 

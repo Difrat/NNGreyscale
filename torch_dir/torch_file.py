@@ -31,12 +31,10 @@ class MyDataset(Dataset):
         return len(self.list_dataset)
 
     def __getitem__(self, idx):
-
         t = self.list_dataset[idx][-1]
         target = 0
 
         if isinstance(t, str):
-
             target = self.targets[self.dict_of_targets[t]]
 
         data = self.list_dataset[idx][0]

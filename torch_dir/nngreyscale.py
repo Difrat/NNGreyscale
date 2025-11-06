@@ -54,7 +54,6 @@ class NNGreyscale:
 
         return None
 
-
     def train_nn(self, model_name: str) -> None:
         """
         Данный метод применяется для обучения модели на тренировочных данных
@@ -95,7 +94,6 @@ class NNGreyscale:
 
         return None
 
-
     def test_nn(self) -> None:
 
         test_data = DataLoader(self.__test_data, batch_size=1, shuffle=False, drop_last=False)
@@ -113,13 +111,12 @@ class NNGreyscale:
         q /= len(self.__test_data)
         print(q)
 
-
     def set_model_nn(self, model_nn_name: str) -> None:
 
-        self.__model_nn.load_state_dict(torch.load(f'C:\\Users\\Difrat\\PycharmProjects\\PyTorch_tutorial\\torch_dir\\models\\{model_nn_name}.zip'))
+        self.__model_nn.load_state_dict(
+            torch.load(f'C:\\Users\\Difrat\\PycharmProjects\\PyTorch_tutorial\\torch_dir\\models\\{model_nn_name}.zip'))
 
         return None
-
 
     def run_model(self, file_name: str) -> None:
         self.__model_nn.eval()
@@ -140,7 +137,3 @@ class NNGreyscale:
         move_file(old_file_name=file_name, new_file_name=file_name)
 
         return None
-
-
-
-
