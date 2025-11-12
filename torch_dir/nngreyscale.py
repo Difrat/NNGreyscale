@@ -95,7 +95,11 @@ class NNGreyscale:
         return None
 
     def test_nn(self) -> None:
+        """
+        Метод использует обученную модель и тестовые данные которые еще не использовались для работы модели
 
+        :return:None
+        """
         test_data = DataLoader(self.__test_data, batch_size=1, shuffle=False, drop_last=False)
         q = 0
 
@@ -112,17 +116,30 @@ class NNGreyscale:
         print(q)
 
     def set_model_nn(self, model_nn_name: str) -> None:
+        """
+        Метод подгружает сохраненные матрицы весов
 
+        :param model_nn_name: Строковый параметр имени подгружаемой модели
+        :return: None
+        """
         self.__model_nn.load_state_dict(
-            torch.load(f'C:\\Users\\Difrat\\PycharmProjects\\PyTorch_tutorial\\torch_dir\\models\\{model_nn_name}.zip'))
+            torch.load(os.path.join(os.getcwd(), f'models\\{model_nn_name}.zip')))
 
         return None
 
     def run_model(self, file_name: str) -> None:
+        """
+        Метод запускает нейросеть. Результатом работы которой является предсказание пикселей.
+
+        :param file_name: Строковый параметр имени файла для которого идет предсказание пикселей.
+
+        :return: None
+        """
         self.__model_nn.eval()
 
         self.__combat_data = MyDataset(self.data)
         combat_data = DataLoader(self.__combat_data, batch_size=1, shuffle=False, drop_last=False)
+        pixel_name = {'Black': 0, 'Dark gray': 1, 'Gray': 2, 'Light Gray': 3, 'White': 4}
 
         list_predictions = ['Gray class']
 
@@ -130,7 +147,10 @@ class NNGreyscale:
             with torch.no_grad():
                 prediction = self.__model_nn(item)
                 prediction = torch.argmax(prediction, dim=0)
-                list_predictions.append(prediction.item())
+                for key, value in pixel_name.items():
+                    if value == prediction.item():
+                        list_predictions.append(key)
+
 
         write_data_file(f'{file_name}', list_predictions)
 

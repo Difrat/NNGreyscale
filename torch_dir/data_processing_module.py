@@ -7,10 +7,17 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 
+def creat_folder() -> None:
+    """
+    Функция создает необходимые папки для работы проекта
+    :return: None
+    """
 
-# def convert_data_to_percent(num: int) -> int:
-#     """Преобразования диапазона 0-255 RGB каналов к процентам """
-#     return int(num / 255 * 100)
+    name_dir = ('dataset', 'image', 'models', 'results')
+    for name in name_dir:
+        os.mkdir(os.path.join(os.getcwd(),name))
+
+    return None
 
 def get_data_from_image(file_name: str) -> list:
     """Функция получает характеристики каждого пикселя из изображения и отдает список. Список содержит RGB цветовые
@@ -105,3 +112,5 @@ def mark_pixel(dataset: np.ndarray) -> list:
             color.append('White')
 
     return color
+
+creat_folder()
